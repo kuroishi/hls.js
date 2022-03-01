@@ -521,6 +521,9 @@ export default class MP4Remuxer implements Remuxer {
       const nbUnits = units.length;
       let sampleLen = 0;
       for (let j = 0; j < nbUnits; j++) {
+        if (units[j].type == 7 /* SPS */ || units[j].type == 8 /* PPS */) {
+          continue;
+        }
         sampleLen += units[j].data.length;
       }
 
@@ -565,6 +568,9 @@ export default class MP4Remuxer implements Remuxer {
       // convert NALU bitstream to MP4 format (prepend NALU with size field)
       for (let j = 0, nbUnits = avcSampleUnits.length; j < nbUnits; j++) {
         const unit = avcSampleUnits[j];
+        if (unit.type == 7 /* SPS */ || unit.type == 8 /* PPS */) {
+          continue;
+        }
         const unitData = unit.data;
         const unitDataLen = unit.data.byteLength;
         view.setUint32(offset, unitDataLen);
